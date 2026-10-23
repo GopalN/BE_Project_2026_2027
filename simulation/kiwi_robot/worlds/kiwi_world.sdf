@@ -1,0 +1,669 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <world name="kiwi_world">
+
+    <!-- PHYSICS -->
+    <gravity>0 0 -9.81</gravity>
+    <physics name="default_physics" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>50</iters>
+        </solver>
+      </ode>
+    </physics>
+
+    <!-- GUI  -->
+    <gui>
+      <camera name="user_camera">
+        <pose>12 -8 6 0 0.5 2.4</pose>
+      </camera>
+    </gui>
+
+    <!--  PLUGINS  -->
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors"/>
+    <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact"/>
+
+    <!-- SCENE  -->
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.2 0.2 0.3 1</background>
+    </scene>
+
+    <!--  LIGHTING  -->
+    <!-- Overhead warehouse lights -->
+    <light type="directional" name="warehouse_light_main">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 12 0 0 0</pose>
+      <diffuse>0.85 0.85 0.8 1</diffuse>
+      <specular>0.3 0.3 0.3 1</specular>
+      <direction>-0.2 0.1 -0.9</direction>
+    </light>
+
+    <light type="point" name="warehouse_light_a">
+      <pose>-5 -5 7 0 0 0</pose>
+      <diffuse>0.6 0.6 0.55 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <attenuation>
+        <range>20</range>
+        <constant>0.5</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+    </light>
+
+    <light type="point" name="warehouse_light_b">
+      <pose>5 5 7 0 0 0</pose>
+      <diffuse>0.6 0.6 0.55 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <attenuation>
+        <range>20</range>
+        <constant>0.5</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+    </light>
+
+    <!-- GROUND PLANE -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1.0</mu>
+                <mu2>1.0</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.3 0.3 0.3 1</ambient>
+            <diffuse>0.35 0.35 0.35 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!--  WAREHOUSE FLOOR  -->
+    <model name="warehouse_floor">
+      <static>true</static>
+      <pose>0 0 0.001 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box><size>20 16 0.001</size></box>
+          </geometry>
+          <material>
+            <ambient>0.45 0.43 0.4 1</ambient>
+            <diffuse>0.5 0.48 0.45 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- WAREHOUSE WALLS -->
+    <!-- North wall -->
+    <model name="wall_north">
+      <static>true</static>
+      <pose>0 8 2.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>20 0.2 5</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>20 0.2 5</size></box>
+          </geometry>
+          <material>
+            <ambient>0.7 0.7 0.65 1</ambient>
+            <diffuse>0.75 0.75 0.7 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- South wall -->
+    <model name="wall_south">
+      <static>true</static>
+      <pose>0 -8 2.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>20 0.2 5</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>20 0.2 5</size></box>
+          </geometry>
+          <material>
+            <ambient>0.7 0.7 0.65 1</ambient>
+            <diffuse>0.75 0.75 0.7 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- East wall -->
+    <model name="wall_east">
+      <static>true</static>
+      <pose>10 0 2.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 16 5</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 16 5</size></box>
+          </geometry>
+          <material>
+            <ambient>0.7 0.7 0.65 1</ambient>
+            <diffuse>0.75 0.75 0.7 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- West wall -->
+    <model name="wall_west">
+      <static>true</static>
+      <pose>-10 0 2.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 16 5</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 16 5</size></box>
+          </geometry>
+          <material>
+            <ambient>0.7 0.7 0.65 1</ambient>
+            <diffuse>0.75 0.75 0.7 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!--  SHELVING RACK ROW A (left side) -->
+    <!-- Rack A1 -->
+    <model name="aisle_1_shelf_1">
+      <static>true</static>
+      <pose>-7 -4 0 0 0 0</pose>
+      <link name="link">
+        <!-- Left upright -->
+        <visual name="left_upright">
+          <pose>0 -0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material>
+        </visual>
+        <collision name="left_upright_col">
+          <pose>0 -0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+        </collision>
+        <!-- Right upright -->
+        <visual name="right_upright">
+          <pose>0 0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material>
+        </visual>
+        <collision name="right_upright_col">
+          <pose>0 0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+        </collision>
+        <!-- Shelf 1 -->
+        <visual name="shelf_1">
+          <pose>0 0 0.8 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_1_col">
+          <pose>0 0 0.8 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+        <!-- Shelf 2 -->
+        <visual name="shelf_2">
+          <pose>0 0 1.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_2_col">
+          <pose>0 0 1.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+        <!-- Shelf 3 -->
+        <visual name="shelf_3">
+          <pose>0 0 2.4 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_3_col">
+          <pose>0 0 2.4 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Rack A2 -->
+    <model name="aisle_1_shelf_2">
+      <static>true</static>
+      <pose>-7 -1 0 0 0 0</pose>
+      <link name="link">
+        <visual name="left_upright">
+          <pose>0 -0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material>
+        </visual>
+        <collision name="left_upright_col">
+          <pose>0 -0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+        </collision>
+        <visual name="right_upright">
+          <pose>0 0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material>
+        </visual>
+        <collision name="right_upright_col">
+          <pose>0 0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+        </collision>
+        <visual name="shelf_1">
+          <pose>0 0 0.8 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_1_col">
+          <pose>0 0 0.8 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+        <visual name="shelf_2">
+          <pose>0 0 1.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_2_col">
+          <pose>0 0 1.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+        <visual name="shelf_3">
+          <pose>0 0 2.4 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_3_col">
+          <pose>0 0 2.4 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Rack A3 -->
+    <model name="aisle_1_shelf_3">
+      <static>true</static>
+      <pose>-7 2 0 0 0 0</pose>
+      <link name="link">
+        <visual name="left_upright">
+          <pose>0 -0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material>
+        </visual>
+        <collision name="left_upright_col">
+          <pose>0 -0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+        </collision>
+        <visual name="right_upright">
+          <pose>0 0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material>
+        </visual>
+        <collision name="right_upright_col">
+          <pose>0 0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+        </collision>
+        <visual name="shelf_1">
+          <pose>0 0 0.8 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_1_col">
+          <pose>0 0 0.8 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+        <visual name="shelf_2">
+          <pose>0 0 1.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_2_col">
+          <pose>0 0 1.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+        <visual name="shelf_3">
+          <pose>0 0 2.4 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_3_col">
+          <pose>0 0 2.4 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!--  SHELVING RACK ROW B (center)  -->
+    <!-- Rack B1 -->
+    <model name="aisle_2_shelf_1">
+      <static>true</static>
+      <pose>-3 -4 0 0 0 0</pose>
+      <link name="link">
+        <visual name="left_upright">
+          <pose>0 -0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material>
+        </visual>
+        <collision name="left_upright_col">
+          <pose>0 -0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+        </collision>
+        <visual name="right_upright">
+          <pose>0 0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material>
+        </visual>
+        <collision name="right_upright_col">
+          <pose>0 0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+        </collision>
+        <visual name="shelf_1">
+          <pose>0 0 0.8 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_1_col">
+          <pose>0 0 0.8 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+        <visual name="shelf_2">
+          <pose>0 0 1.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_2_col">
+          <pose>0 0 1.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+        <visual name="shelf_3">
+          <pose>0 0 2.4 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_3_col">
+          <pose>0 0 2.4 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Rack B2 -->
+    <model name="aisle_2_shelf_2">
+      <static>true</static>
+      <pose>-3 -1 0 0 0 0</pose>
+      <link name="link">
+        <visual name="left_upright">
+          <pose>0 -0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material>
+        </visual>
+        <collision name="left_upright_col">
+          <pose>0 -0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+        </collision>
+        <visual name="right_upright">
+          <pose>0 0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material>
+        </visual>
+        <collision name="right_upright_col">
+          <pose>0 0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+        </collision>
+        <visual name="shelf_1">
+          <pose>0 0 0.8 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_1_col">
+          <pose>0 0 0.8 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+        <visual name="shelf_2">
+          <pose>0 0 1.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_2_col">
+          <pose>0 0 1.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+        <visual name="shelf_3">
+          <pose>0 0 2.4 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_3_col">
+          <pose>0 0 2.4 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Rack B3 -->
+    <model name="aisle_2_shelf_3">
+      <static>true</static>
+      <pose>-3 2 0 0 0 0</pose>
+      <link name="link">
+        <visual name="left_upright">
+          <pose>0 -0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material>
+        </visual>
+        <collision name="left_upright_col">
+          <pose>0 -0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+        </collision>
+        <visual name="right_upright">
+          <pose>0 0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material>
+        </visual>
+        <collision name="right_upright_col">
+          <pose>0 0.4 1.5 0 0 0</pose>
+          <geometry><box><size>0.05 0.05 3.0</size></box></geometry>
+        </collision>
+        <visual name="shelf_1">
+          <pose>0 0 0.8 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_1_col">
+          <pose>0 0 0.8 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+        <visual name="shelf_2">
+          <pose>0 0 1.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_2_col">
+          <pose>0 0 1.6 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+        <visual name="shelf_3">
+          <pose>0 0 2.4 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+          <material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material>
+        </visual>
+        <collision name="shelf_3_col">
+          <pose>0 0 2.4 0 0 0</pose>
+          <geometry><box><size>1.2 0.9 0.03</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- SHELVING RACK ROW C (right side)  -->
+    <model name="aisle_3_shelf_1">
+      <static>true</static>
+      <pose>1 -4 0 0 0 0</pose>
+      <link name="link">
+        <visual name="left_upright"><pose>0 -0.4 1.5 0 0 0</pose><geometry><box><size>0.05 0.05 3.0</size></box></geometry><material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material></visual>
+        <collision name="left_upright_col"><pose>0 -0.4 1.5 0 0 0</pose><geometry><box><size>0.05 0.05 3.0</size></box></geometry></collision>
+        <visual name="right_upright"><pose>0 0.4 1.5 0 0 0</pose><geometry><box><size>0.05 0.05 3.0</size></box></geometry><material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material></visual>
+        <collision name="right_upright_col"><pose>0 0.4 1.5 0 0 0</pose><geometry><box><size>0.05 0.05 3.0</size></box></geometry></collision>
+        <visual name="shelf_1"><pose>0 0 0.8 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry><material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material></visual>
+        <collision name="shelf_1_col"><pose>0 0 0.8 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry></collision>
+        <visual name="shelf_2"><pose>0 0 1.6 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry><material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material></visual>
+        <collision name="shelf_2_col"><pose>0 0 1.6 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry></collision>
+        <visual name="shelf_3"><pose>0 0 2.4 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry><material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material></visual>
+        <collision name="shelf_3_col"><pose>0 0 2.4 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry></collision>
+      </link>
+    </model>
+
+    <model name="aisle_3_shelf_2">
+      <static>true</static>
+      <pose>1 -1 0 0 0 0</pose>
+      <link name="link">
+        <visual name="left_upright"><pose>0 -0.4 1.5 0 0 0</pose><geometry><box><size>0.05 0.05 3.0</size></box></geometry><material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material></visual>
+        <collision name="left_upright_col"><pose>0 -0.4 1.5 0 0 0</pose><geometry><box><size>0.05 0.05 3.0</size></box></geometry></collision>
+        <visual name="right_upright"><pose>0 0.4 1.5 0 0 0</pose><geometry><box><size>0.05 0.05 3.0</size></box></geometry><material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material></visual>
+        <collision name="right_upright_col"><pose>0 0.4 1.5 0 0 0</pose><geometry><box><size>0.05 0.05 3.0</size></box></geometry></collision>
+        <visual name="shelf_1"><pose>0 0 0.8 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry><material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material></visual>
+        <collision name="shelf_1_col"><pose>0 0 0.8 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry></collision>
+        <visual name="shelf_2"><pose>0 0 1.6 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry><material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material></visual>
+        <collision name="shelf_2_col"><pose>0 0 1.6 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry></collision>
+        <visual name="shelf_3"><pose>0 0 2.4 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry><material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material></visual>
+        <collision name="shelf_3_col"><pose>0 0 2.4 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry></collision>
+      </link>
+    </model>
+
+    <model name="aisle_3_shelf_3">
+      <static>true</static>
+      <pose>1 2 0 0 0 0</pose>
+      <link name="link">
+        <visual name="left_upright"><pose>0 -0.4 1.5 0 0 0</pose><geometry><box><size>0.05 0.05 3.0</size></box></geometry><material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material></visual>
+        <collision name="left_upright_col"><pose>0 -0.4 1.5 0 0 0</pose><geometry><box><size>0.05 0.05 3.0</size></box></geometry></collision>
+        <visual name="right_upright"><pose>0 0.4 1.5 0 0 0</pose><geometry><box><size>0.05 0.05 3.0</size></box></geometry><material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.4 0.4 0.45 1</diffuse></material></visual>
+        <collision name="right_upright_col"><pose>0 0.4 1.5 0 0 0</pose><geometry><box><size>0.05 0.05 3.0</size></box></geometry></collision>
+        <visual name="shelf_1"><pose>0 0 0.8 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry><material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material></visual>
+        <collision name="shelf_1_col"><pose>0 0 0.8 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry></collision>
+        <visual name="shelf_2"><pose>0 0 1.6 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry><material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material></visual>
+        <collision name="shelf_2_col"><pose>0 0 1.6 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry></collision>
+        <visual name="shelf_3"><pose>0 0 2.4 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry><material><ambient>0.5 0.4 0.25 1</ambient><diffuse>0.6 0.5 0.3 1</diffuse></material></visual>
+        <collision name="shelf_3_col"><pose>0 0 2.4 0 0 0</pose><geometry><box><size>1.2 0.9 0.03</size></box></geometry></collision>
+      </link>
+    </model>
+
+ 
+    <model name="render_confirm_cam">
+      <static>true</static>
+      <pose>3 0 2 0 0.34 0</pose>
+      <link name="link">
+        <sensor type="camera" name="render_confirm_camera">
+          <topic>/render_confirm/camera</topic>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <camera>
+            <horizontal_fov>1.0472</horizontal_fov>
+            <image>
+              <width>800</width>
+              <height>600</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.05</near>
+              <far>100</far>
+            </clip>
+          </camera>
+        </sensor>
+      </link>
+    </model>
+
+    <!-- conveyor belt  -->
+    <model name="conveyor_belt_1">
+      <static>true</static>
+      <pose>6 0 0 0 0 1.5708</pose>
+      <link name="link">
+        <visual name="leg_1_visual">
+          <pose>-2.5 0 0.35 0 0 0</pose>
+          <geometry><box><size>0.1 0.1 0.7</size></box></geometry>
+          <material><ambient>0.25 0.25 0.28 1</ambient><diffuse>0.3 0.3 0.33 1</diffuse></material>
+        </visual>
+        <collision name="leg_1_collision">
+          <pose>-2.5 0 0.35 0 0 0</pose>
+          <geometry><box><size>0.1 0.1 0.7</size></box></geometry>
+        </collision>
+        <visual name="leg_2_visual">
+          <pose>2.5 0 0.35 0 0 0</pose>
+          <geometry><box><size>0.1 0.1 0.7</size></box></geometry>
+          <material><ambient>0.25 0.25 0.28 1</ambient><diffuse>0.3 0.3 0.33 1</diffuse></material>
+        </visual>
+        <collision name="leg_2_collision">
+          <pose>2.5 0 0.35 0 0 0</pose>
+          <geometry><box><size>0.1 0.1 0.7</size></box></geometry>
+        </collision>
+        <visual name="belt_surface_visual">
+          <pose>0 0 0.74 0 0 0</pose>
+          <geometry><box><size>5.4 0.8 0.08</size></box></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material>
+        </visual>
+        <collision name="belt_surface_collision">
+          <pose>0 0 0.74 0 0 0</pose>
+          <geometry><box><size>5.4 0.8 0.08</size></box></geometry>
+        </collision>
+        <visual name="roller_1_visual">
+          <pose>-2.6 0 0.74 1.5708 0 0</pose>
+          <geometry><cylinder><radius>0.1</radius><length>0.85</length></cylinder></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient><diffuse>0.6 0.6 0.6 1</diffuse></material>
+        </visual>
+        <collision name="roller_1_collision">
+          <pose>-2.6 0 0.74 1.5708 0 0</pose>
+          <geometry><cylinder><radius>0.1</radius><length>0.85</length></cylinder></geometry>
+        </collision>
+        <visual name="roller_2_visual">
+          <pose>2.6 0 0.74 1.5708 0 0</pose>
+          <geometry><cylinder><radius>0.1</radius><length>0.85</length></cylinder></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient><diffuse>0.6 0.6 0.6 1</diffuse></material>
+        </visual>
+        <collision name="roller_2_collision">
+          <pose>2.6 0 0.74 1.5708 0 0</pose>
+          <geometry><cylinder><radius>0.1</radius><length>0.85</length></cylinder></geometry>
+        </collision>
+      </link>
+    </model>
+</world>
+</sdf>

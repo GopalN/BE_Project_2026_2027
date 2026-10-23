@@ -1,0 +1,37 @@
+slam_toolbox:
+  ros__parameters:
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+
+    mode: mapping
+
+    # frames
+    # check with: ros2 run tf2_tools view_frames  (then open frames.pdf)
+    # or:         ros2 topic echo /tf --once
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_link
+    scan_topic: /scan
+
+    max_laser_range: 20.0
+    minimum_travel_distance: 0.2
+    minimum_travel_heading: 0.17
+    scan_buffer_size: 10
+    scan_buffer_maximum_scan_distance: 20.0
+
+    do_loop_closing: true
+    loop_search_maximum_distance: 8.0
+
+    resolution: 0.05
+    map_update_interval: 2.0
+    transform_publish_period: 0.02
+    transform_timeout: 0.3
+    tf_buffer_duration: 30.0
+
+    use_scan_matching: true
+    use_scan_barycenter: true
+    stack_size_to_use: 40000000

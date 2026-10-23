@@ -1,0 +1,295 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="kiwi_robot">
+
+  <xacro:property name="chassis_radius" value="0.30"/>
+  <xacro:property name="chassis_height" value="0.12"/>
+  <xacro:property name="chassis_mass" value="9.0"/>
+
+  <xacro:property name="wheel_radius" value="0.08"/>
+  <xacro:property name="wheel_width" value="0.05"/>
+  <xacro:property name="wheel_mass" value="0.9"/>
+  <xacro:property name="wheel_offset" value="0.24"/>
+
+  <xacro:property name="roller_radius" value="0.016"/>
+  <xacro:property name="roller_length" value="0.04"/>
+
+  <xacro:property name="lidar_radius" value="0.07"/>
+  <xacro:property name="lidar_height" value="0.08"/>
+  <xacro:property name="lidar_mass" value="0.6"/>
+
+  <!-- inertia macros -->
+  <xacro:macro name="cylinder_inertia" params="m r h">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${(m/12.0)*(3*r*r + h*h)}" ixy="0" ixz="0"
+               iyy="${(m/12.0)*(3*r*r + h*h)}" iyz="0"
+               izz="${(m/2.0)*r*r}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="box_inertia" params="m x y z">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${(m/12.0)*(y*y + z*z)}" ixy="0" ixz="0"
+               iyy="${(m/12.0)*(x*x + z*z)}" iyz="0"
+               izz="${(m/12.0)*(x*x + y*y)}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!--  materials  -->
+  <material name="dark_gray">
+    <color rgba="0.2 0.2 0.2 1.0"/>
+  </material>
+  <material name="silver">
+    <color rgba="0.7 0.7 0.75 1.0"/>
+  </material>
+  <material name="black">
+    <color rgba="0.05 0.05 0.05 1.0"/>
+  </material>
+  <material name="green_accent">
+    <color rgba="0.2 0.8 0.3 1.0"/>
+  </material>
+  <material name="blue_sensor">
+    <color rgba="0.1 0.3 0.8 1.0"/>
+  </material>
+
+  <!-- base footprint -->
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${wheel_radius + chassis_height/2.0}" rpy="0 0 0"/>
+  </joint>
+
+  <!--  vhassis -->
+  <link name="base_link">
+    <xacro:cylinder_inertia m="${chassis_mass}" r="${chassis_radius}" h="${chassis_height}"/>
+    <visual>
+      <geometry>
+        <cylinder radius="${chassis_radius}" length="${chassis_height}"/>
+      </geometry>
+      <material name="dark_gray"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${chassis_radius}" length="${chassis_height}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Top plate accent ring -->
+  <link name="top_plate">
+    <visual>
+      <geometry>
+        <cylinder radius="${chassis_radius * 0.85}" length="0.006"/>
+      </geometry>
+      <material name="green_accent"/>
+    </visual>
+  </link>
+  <joint name="top_plate_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="top_plate"/>
+    <origin xyz="0 0 ${chassis_height/2.0 + 0.004}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- wheel macro -->
+  <xacro:macro name="kiwi_wheel" params="name angle_deg">
+    <!-- Compute angle in radians -->
+    <xacro:property name="angle_rad" value="${radians(angle_deg)}"/>
+
+    <!-- Wheel hub (motor housing) -->
+    <link name="${name}_hub">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.04" length="0.06"/>
+        </geometry>
+        <material name="silver"/>
+      </visual>
+    </link>
+    <joint name="${name}_hub_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="${name}_hub"/>
+      <origin xyz="${wheel_offset * cos(angle_rad)} ${wheel_offset * sin(angle_rad)} ${-chassis_height/2.0 + 0.01}"
+              rpy="${pi/2.0} 0 ${angle_rad}"/>
+    </joint>
+
+    <!-- Wheel link -->
+    <link name="${name}_wheel">
+      <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+      <visual>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${name}_wheel_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${name}_wheel"/>
+      
+      <origin xyz="${wheel_offset * cos(angle_rad)} ${wheel_offset * sin(angle_rad)} ${-chassis_height/2.0}"
+              rpy="${pi/2.0} 0 ${angle_rad + pi/2.0}"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="0.01" friction="0.005"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- instantiate 3 wheels at 120 degree intervals -->
+  <xacro:kiwi_wheel name="front"      angle_deg="90"/>
+  <xacro:kiwi_wheel name="rear_left"  angle_deg="210"/>
+  <xacro:kiwi_wheel name="rear_right" angle_deg="-30"/>
+
+  <!-- lidar -->
+  <link name="lidar_link">
+    <xacro:cylinder_inertia m="${lidar_mass}" r="${lidar_radius}" h="${lidar_height}"/>
+    <visual>
+      <geometry>
+        <cylinder radius="${lidar_radius}" length="${lidar_height}"/>
+      </geometry>
+      <material name="blue_sensor"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${lidar_radius}" length="${lidar_height}"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <origin xyz="0 0 ${chassis_height/2.0 + 0.006 + lidar_height/2.0}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- gazebo material-->
+  <gazebo reference="base_link">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="top_plate">
+    <material>Gazebo/Green</material>
+  </gazebo>
+  <gazebo reference="front_hub">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+  <gazebo reference="rear_left_hub">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+  <gazebo reference="rear_right_hub">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+  <gazebo reference="front_wheel">
+    <material>Gazebo/Black</material>
+    <!-- Kiwi/omni wheel: this cylinder has no modeled rollers, so friction
+         must be anisotropic to emulate one. fdir1 is expressed in this
+         wheel link's own frame, where local Z is the wheel's spin/axle
+         axis (which maps to the robot-relative RADIAL direction — the
+         direction the omni kinematics need to slip freely). mu1 (along
+         fdir1) stays low so the wheel can slide radially; mu2 (perpendicular,
+         the tangential rolling direction) stays high for drive traction. -->
+    <mu1>0.02</mu1>
+    <mu2>1.0</mu2>
+    <fdir1>0 0 1</fdir1>
+  </gazebo>
+  <gazebo reference="rear_left_wheel">
+    <material>Gazebo/Black</material>
+    <!-- see front_wheel comment: anisotropic friction emulates the omni roller -->
+    <mu1>0.02</mu1>
+    <mu2>1.0</mu2>
+    <fdir1>0 0 1</fdir1>
+  </gazebo>
+  <gazebo reference="rear_right_wheel">
+    <material>Gazebo/Black</material>
+    <!-- see front_wheel comment: anisotropic friction emulates the omni roller -->
+    <mu1>0.02</mu1>
+    <mu2>1.0</mu2>
+    <fdir1>0 0 1</fdir1>
+  </gazebo>
+  <gazebo reference="lidar_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <!-- plugins -->
+  <gazebo>
+    <plugin filename="gz-sim-joint-state-publisher-system"
+            name="gz::sim::systems::JointStatePublisher">
+      <joint_name>front_wheel_joint</joint_name>
+      <joint_name>rear_left_wheel_joint</joint_name>
+      <joint_name>rear_right_wheel_joint</joint_name>
+    </plugin>
+  </gazebo>
+
+ 
+  <gazebo>
+    <plugin filename="gz-sim-odometry-publisher-system"
+            name="gz::sim::systems::OdometryPublisher">
+      <odom_frame>odom</odom_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+      <odom_topic>model/kiwi_robot/odometry</odom_topic>
+      <odom_publish_frequency>20</odom_publish_frequency>
+      <tf_topic>tf</tf_topic>
+      <dimensions>2</dimensions>
+    </plugin>
+  </gazebo>
+
+
+  <gazebo>
+    <plugin filename="gz-sim-joint-controller-system"
+            name="gz::sim::systems::JointController">
+      <joint_name>front_wheel_joint</joint_name>
+      <topic>/model/kiwi_robot/joint/front_wheel_joint/cmd_vel</topic>
+      <use_force_commands>false</use_force_commands>
+      <p_gain>2.0</p_gain>
+    </plugin>
+  </gazebo>
+  <gazebo>
+    <plugin filename="gz-sim-joint-controller-system"
+            name="gz::sim::systems::JointController">
+      <joint_name>rear_left_wheel_joint</joint_name>
+      <topic>/model/kiwi_robot/joint/rear_left_wheel_joint/cmd_vel</topic>
+      <use_force_commands>false</use_force_commands>
+      <p_gain>2.0</p_gain>
+    </plugin>
+  </gazebo>
+  <gazebo>
+    <plugin filename="gz-sim-joint-controller-system"
+            name="gz::sim::systems::JointController">
+      <joint_name>rear_right_wheel_joint</joint_name>
+      <topic>/model/kiwi_robot/joint/rear_right_wheel_joint/cmd_vel</topic>
+      <use_force_commands>false</use_force_commands>
+      <p_gain>2.0</p_gain>
+    </plugin>
+  </gazebo>
+
+  <!-- Lidar sensor -->
+  <gazebo reference="lidar_link">
+    <sensor name="lidar" type="gpu_lidar">
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <topic>scan</topic>
+      <gz_frame_id>lidar_link</gz_frame_id>
+      <lidar>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.12</min>
+          <max>10.0</max>
+          <resolution>0.01</resolution>
+        </range>
+      </lidar>
+    </sensor>
+  </gazebo>
+
+</robot>
