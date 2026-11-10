@@ -1,79 +1,90 @@
-````markdown
-# BE Capstone Project
+# BE CAPSTONE PROJECT 
 
-## Project Title
+## 🤖 Decentralized Swarm Autonomous Ground Vehicles
+<p align="left">
+  <a href="https://youtu.be/RQamKgik0cE?si=gTgPMuQe8ZkZP1P7">
+    <img src="https://img.shields.io/badge/Project-Video%20Link-blue?style=for-the-badge" alt="Project Video">
+  </a>
+</p>
 
-**Write the full title of your project here**
+
 
 ---
+## 👥 Team Details
 
-## Team Details
-
-| Sr. No. | Name of Student | Roll No. | Branch | Email ID |
-|---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
+| **Sr. No.** | **Name of Student** | **Roll No.** | **Branch** | **Email ID** |
+|:---:|:---|:---:|:---|:---|
+| 1 | Abbas Najam | 59 |Automation and Robotics | [2023.abbas.najam@ves.ac.in](mailto:2023.abbas.najam@ves.ac.in) |
+| 2 | Mayuresh Joshi | 49 | Automation and Robotics | [2023.mayuresh.joshi@ves.ac.in](mailto:2023.mayuresh.joshi@ves.ac.in) |
+| 3 | Shravan Umrale | 66 | Automation and Robotics | [2023.shravan.umrale@ves.ac.in](mailto:2023.shravan.umrale@ves.ac.in) |
+| 4 | Yash Vaychal | 31 | Automation and Robotics | [2023.yash.vaychal@ves.ac.in](mailto:2023.yash.vaychal@ves.ac.in) |
 
 ---
 
 ## Guide Details
 
-**Project Guide:**  
+**Project Guide:**  Deepti Khimani
+
 **Department:** Automation and Robotics  
-**Institute:** VESIT, Mumbai  
+
+**Institute:** VESIT, Mumbai
+
+# 📌 Project Overview
+
+Swarm robotics is inspired by the collective behavior observed in nature such as ants, bees, and birds. It involves multiple autonomous robots coordinating with each other to accomplish complex tasks efficiently.
+
+This project focuses on developing a **decentralized swarm of Autonomous Ground Vehicles (AGVs)** capable of collaborative operation without depending on a single central controller.
+
+The proposed system combines autonomous navigation, mapping, localization, swarm intelligence, distributed decision-making, communication, and fault detection and recovery.
+
+The system is designed to operate reliably even when an individual robot experiences a failure.
+
+### Key Capabilities
+
+* 🤖 Autonomous navigation
+* 🗺️ Mapping and localization
+* 📡 Robot-to-robot communication
+* 🧠 Decentralized decision-making
+* 🤝 Swarm intelligence
+* 🚨 Fault detection
+* 🔄 Fault recovery
+* 🧭 Path planning
+* 🚧 Obstacle avoidance
+* 🔀 Task reallocation
+* ⚙️ Distributed motion control
 
 ---
 
-## Problem Statement
+# 🎯 Problem Statement
 
-Write a clear problem statement here.
+Most swarm robotic systems currently exist in a **centralized architecture**, where a central controller is responsible for coordinating the robots.
 
-Example:
+However, in real-world applications, we cannot rely on a single point of failure. If the central controller fails or communication with it is lost, the entire swarm can be affected.
 
-> The aim of this project is to design and develop a system that solves the problem of __________ by using __________ technology.
-
----
-
-## Abstract
-
-Write a short summary of the project in 150–250 words.
-
-The abstract should include:
-
-- Background of the problem
-- Proposed solution
-- Technology used
-- Expected outcome
-- Application area
+Therefore, this project aims to develop a **decentralized swarm system with fault detection and recovery mechanisms**, where individual robots can communicate with neighboring robots, make local decisions, detect failures, and continue the mission collectively.
 
 ---
 
-## Objectives
+# 🚀 Objectives
 
-1. To study the existing problem and available solutions.
-2. To design a suitable hardware/software/system architecture.
-3. To implement the proposed solution.
-4. To test and validate the system.
-5. To document and publish the project work.
+The major objectives of this project are:
 
----
-
-## Scope of the Project
-
-Mention what the project will cover.
-
-Example:
-
-- Design and development of prototype
-- Hardware implementation
-- Software/mobile/web interface
-- Data collection and testing
-- Performance analysis
+* Develop a decentralized multi-robot swarm system.
+* Enable communication between multiple autonomous ground vehicles.
+* Implement autonomous navigation.
+* Implement mapping and localization.
+* Develop obstacle avoidance capabilities.
+* Implement distributed decision-making.
+* Introduce swarm intelligence algorithms.
+* Detect communication, sensor, and motor-related faults.
+* Develop fault recovery mechanisms.
+* Reallocate tasks when a robot becomes unavailable.
+* Maintain swarm operation after individual robot failure.
+* Validate the system through simulation.
+* Develop and test physical AGV prototypes.
+* Evaluate swarm performance under different fault conditions.
 
 ---
-
 ## Existing System
 
 Describe the currently available system or method.
@@ -339,7 +350,7 @@ Add images or videos of the working prototype.
 ![Prototype](images/prototype_photo.jpg)
 ```
 
-Video Link:
+Video Link: https://youtu.be/-i1T_cCoHbY
 
 ```markdown
 [Project Demo Video](https://drive.google.com/your-video-link)
